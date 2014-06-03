@@ -37,18 +37,21 @@ grunt.initConfig({
 
 #### options.host
 Type: `String`
+
 Default value: `'localhost'`
 
 The host used for proxying.
 
 #### options.port
 Type: `Number`
+
 Default value: `8080`
 
 The port used for proxying.
 
 #### options.daemon
 Type: `Boolean`
+
 Default value: `true`
 
 Whether or not to run ZAProxy in daemon mode.
@@ -73,12 +76,14 @@ grunt.initConfig({
 
 #### options.host
 Type: `String`
+
 Default value: `'localhost'`
 
 The host where the proxy is running.
 
 #### options.port
 Type: `Number`
+
 Default value: `8080`
 
 The port where the proxy is running.
@@ -106,18 +111,21 @@ grunt.initConfig({
 
 #### options.url
 Type: `String`
+
 Required: `true`
 
 The URL to scan.
 
 #### options.host
 Type: `String`
+
 Default value: `'localhost'`
 
 The host where the proxy is running.
 
 #### options.port
 Type: `Number`
+
 Default value: `8080`
 
 The port where the proxy is running.
@@ -145,18 +153,21 @@ grunt.initConfig({
 
 #### options.url
 Type: `String`
+
 Required: `true`
 
 The URL to scan.
 
 #### options.host
 Type: `String`
+
 Default value: `'localhost'`
 
 The host where the proxy is running.
 
 #### options.port
 Type: `Number`
+
 Default value: `8080`
 
 The port where the proxy is running.
@@ -181,18 +192,21 @@ grunt.initConfig({
 
 #### options.host
 Type: `String`
+
 Default value: `'localhost'`
 
 The host where the proxy is running.
 
 #### options.port
 Type: `Number`
+
 Default value: `8080`
 
 The port where the proxy is running.
 
 #### options.ignore
 Type: `Array`
+
 Default value: `[]`
 
 A list of alerts to ignore. For example, to ignore the alert about X-Content-Type-Options, set ignore to `[ 'X-Content-Type-Options header missing' ]`.
