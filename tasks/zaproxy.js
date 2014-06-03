@@ -49,6 +49,11 @@ module.exports = function (grunt) {
         grunt.fail.warn('Error launching ZAProxy: ' + code);
       }
     });
+    child.on('error', function (err) {
+      if (err.code === 'ENOENT') {
+        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and zap.sh is available on the executable path.');
+      }
+    });
 
     // Wait until the proxy is responding
     var done = this.async();
