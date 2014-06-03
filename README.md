@@ -130,6 +130,13 @@ Default value: `8080`
 
 The port where the proxy is running.
 
+#### options.exclude
+Type: `Array`
+
+Default value: `[]`
+
+A list of regular expressions for the scanner to ignore.
+
 ## The "zap_scan" task
 Initiate an active scan on a running instance of ZAProxy and wait for it to finish. This task is a multitask in order to allow for multiple scans.
 
@@ -171,6 +178,13 @@ Type: `Number`
 Default value: `8080`
 
 The port where the proxy is running.
+
+#### options.exclude
+Type: `Array`
+
+Default value: `[]`
+
+A list of regular expressions for the scanner to ignore.
 
 ## The "zap_alert" task
 Check alerts from a running instance of ZAProxy. This tasks sets a flag named `zap_alert.failed` if alerts that are not in the ignore list are found. The `zap_stop` task looks for this flag and fails the run if it is found.

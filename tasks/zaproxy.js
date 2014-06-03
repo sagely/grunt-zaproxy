@@ -7,7 +7,8 @@
  */
 'use strict';
 
-var path = require('path'),
+var async = require('async'),
+    path = require('path'),
     ZapClient = require('zaproxy'),
     spawn = require('child_process').spawn,
     _ = require('lodash');
@@ -189,7 +190,8 @@ module.exports = function (grunt) {
     // Set up options.
     var options = this.options({
       host: 'localhost',
-      port: '8080'
+      port: '8080',
+      exclude: []
     });
 
     // check for required options
@@ -203,16 +205,26 @@ module.exports = function (grunt) {
     var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
     _.bindAll(zaproxy.spider, _.functions(zaproxy.spider));
 
-    zaproxy.spider.scan(options.url, function (err) {
+    async.eachSeries(options.exclude, function (item, callback) {
+      zaproxy.spider.excludeFromScan(item, callback);
+    }, function (err) {
       if (err) {
-        grunt.fail.warn('Spider Error: ' + JSON.stringify(err, null, 2));
+        grunt.fail.warn('Spider Exclude Error: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
 
-      waitForScan(zaproxy, zaproxy.spider.status, function () {
-        grunt.log.ok();
-        done();
+      zaproxy.spider.scan(options.url, function (err) {
+        if (err) {
+          grunt.fail.warn('Spider Error: ' + JSON.stringify(err, null, 2));
+          done();
+          return;
+        }
+
+        waitForScan(zaproxy, zaproxy.spider.status, function () {
+          grunt.log.ok();
+          done();
+        });
       });
     });
   });
@@ -224,7 +236,8 @@ module.exports = function (grunt) {
     // Set up options.
     var options = this.options({
       host: 'localhost',
-      port: '8080'
+      port: '8080',
+      exclude: []
     });
 
     // check for required options
@@ -238,16 +251,26 @@ module.exports = function (grunt) {
     var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
     _.bindAll(zaproxy.ascan, _.functions(zaproxy.ascan));
 
-    zaproxy.ascan.scan(options.url, '', '', function (err) {
+    async.eachSeries(options.exclude, function (item, callback) {
+      zaproxy.ascan.excludeFromScan(item, callback);
+    }, function (err) {
       if (err) {
-        grunt.fail.warn('Scan Error: ' + JSON.stringify(err, null, 2));
+        grunt.fail.warn('Scan Exclude Error: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
 
-      waitForScan(zaproxy, zaproxy.ascan.status, function () {
-        grunt.log.ok();
-        done();
+      zaproxy.ascan.scan(options.url, '', '', function (err) {
+        if (err) {
+          grunt.fail.warn('Scan Error: ' + JSON.stringify(err, null, 2));
+          done();
+          return;
+        }
+
+        waitForScan(zaproxy, zaproxy.ascan.status, function () {
+          grunt.log.ok();
+          done();
+        });
       });
     });
   });
