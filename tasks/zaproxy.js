@@ -320,4 +320,30 @@ module.exports = function (grunt) {
       });
     });
   });
+
+  /**
+   * Retrieve the XML report from a running ZAProxy.
+   **/
+  grunt.registerTask('zap_report', 'Retrieve the ZAProxy XML report.', function () {
+    // Set up options.
+    var options = this.options({
+      host: 'localhost',
+      port: '8080'
+    });
+
+    // check for required options
+    if (!options.path) {
+      grunt.fail.warn('path must be defined.');
+      return;
+    }
+
+    var done = this.async();
+    var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
+
+    grunt.log.write('Retrieving XML report: ');
+    zaproxy.core.xmlreport(function (err, data) {
+      grunt.file.write(options.path, data);
+      done();
+    });
+  });
 };
