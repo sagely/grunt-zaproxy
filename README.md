@@ -240,7 +240,7 @@ In your project's Gruntfile, add a section named `zap_report` to the data object
 
 ```js
 grunt.initConfig({
-  'zap_report: {
+  'zap_report': {
     options: {
       // Task-specific options go here.
     }
