@@ -75,8 +75,10 @@ module.exports = function (grunt) {
             }, 1000);
           }
         } else {
-          grunt.log.ok();
-          done();
+          zaproxy.core.newSession('', false, function () {
+            grunt.log.ok();
+            done();
+          });
         }
       });
     };
@@ -205,27 +207,19 @@ module.exports = function (grunt) {
     var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
     _.bindAll(zaproxy.spider, _.functions(zaproxy.spider));
 
-    async.eachSeries(options.exclude, function (item, callback) {
-      zaproxy.spider.excludeFromScan(item, callback);
-    }, function (err) {
+    async.series([
+      async.apply(async.eachSeries, options.exclude, zaproxy.spider.excludeFromScan),
+      async.apply(zaproxy.spider.scan, options.url),
+      async.apply(waitForScan, zaproxy, zaproxy.spider.status)
+    ], function (err) {
       if (err) {
-        grunt.fail.warn('Spider Exclude Error: ' + JSON.stringify(err, null, 2));
+        grunt.fail.warn('Spider Error: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
 
-      zaproxy.spider.scan(options.url, function (err) {
-        if (err) {
-          grunt.fail.warn('Spider Error: ' + JSON.stringify(err, null, 2));
-          done();
-          return;
-        }
-
-        waitForScan(zaproxy, zaproxy.spider.status, function () {
-          grunt.log.ok();
-          done();
-        });
-      });
+      grunt.log.ok();
+      done();
     });
   });
 
@@ -237,7 +231,8 @@ module.exports = function (grunt) {
     var options = this.options({
       host: 'localhost',
       port: '8080',
-      exclude: []
+      exclude: [],
+      disable: []
     });
 
     // check for required options
@@ -251,27 +246,27 @@ module.exports = function (grunt) {
     var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
     _.bindAll(zaproxy.ascan, _.functions(zaproxy.ascan));
 
-    async.eachSeries(options.exclude, function (item, callback) {
-      zaproxy.ascan.excludeFromScan(item, callback);
-    }, function (err) {
+    async.series([
+      async.apply(async.eachSeries, options.exclude, zaproxy.ascan.excludeFromScan),
+      async.apply(zaproxy.ascan.enableAllScanners),
+      function (callback) {
+        if (options.disable && options.disable.length) {
+          zaproxy.ascan.disableScanners(options.disable.join(','), callback);
+        } else {
+          callback();
+        }
+      },
+      async.apply(zaproxy.ascan.scan, options.url, '', ''),
+      async.apply(waitForScan, zaproxy, zaproxy.ascan.status)
+    ], function (err) {
       if (err) {
-        grunt.fail.warn('Scan Exclude Error: ' + JSON.stringify(err, null, 2));
+        grunt.fail.warn('Scan Error: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
 
-      zaproxy.ascan.scan(options.url, '', '', function (err) {
-        if (err) {
-          grunt.fail.warn('Scan Error: ' + JSON.stringify(err, null, 2));
-          done();
-          return;
-        }
-
-        waitForScan(zaproxy, zaproxy.ascan.status, function () {
-          grunt.log.ok();
-          done();
-        });
-      });
+      grunt.log.ok();
+      done();
     });
   });
 

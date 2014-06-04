@@ -18,7 +18,7 @@ grunt.loadNpmTasks('grunt-zaproxy');
 ```
 
 ## The "zap_start" task
-Start a ZAProxy instance and wait for it to initialize. Note that ZAProxy must be installed and zap.sh must be available on the executable path for this to work.
+Start a ZAProxy instance, wait for it to initialize, and create a new session. Note that ZAProxy must be installed and zap.sh must be available on the executable path for this to work.
 
 ### Overview
 In your project's Gruntfile, add a section named `zap_start` to the data object passed into `grunt.initConfig()`.
@@ -185,6 +185,13 @@ Type: `Array`
 Default value: `[]`
 
 A list of regular expressions for the scanner to ignore.
+
+#### options.disable
+Type: `Array`
+
+Default value: `[]`
+
+A list of scanner IDs to disable.
 
 ## The "zap_alert" task
 Check alerts from a running instance of ZAProxy. This tasks sets a flag named `zap_alert.failed` if alerts that are not in the ignore list are found. The `zap_stop` task looks for this flag and fails the run if it is found.
