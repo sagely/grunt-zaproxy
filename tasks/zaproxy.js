@@ -40,7 +40,7 @@ module.exports = function (grunt) {
       }
     }
 
-    // Spawn ZAProxy 
+    // Spawn ZAProxy
     // var zapPath = path.join(__dirname, '../vendor/zap');
     // var cmd = path.join(options.path, 'zap.sh');
     grunt.log.write('Starting ZAProxy: ');
@@ -328,12 +328,13 @@ module.exports = function (grunt) {
     // Set up options.
     var options = this.options({
       host: 'localhost',
-      port: '8080'
+      port: '8080',
+      html: false
     });
 
     // check for required options
-    if (!options.path) {
-      grunt.fail.warn('path must be defined.');
+    if (!options.dir) {
+      grunt.fail.warn('dir must be defined.');
       return;
     }
 
@@ -342,8 +343,33 @@ module.exports = function (grunt) {
 
     grunt.log.write('Retrieving XML report: ');
     zaproxy.core.xmlreport(function (err, data) {
-      grunt.file.write(options.path, data);
-      done();
+      grunt.log.ok();
+
+      var filename = path.join(options.dir, 'report.xml');
+      grunt.log.write('Writing ' + filename + ': ');
+      grunt.file.write(filename, data);
+      grunt.log.ok();
+
+      if (options.html) {
+        var xslt;
+        try {
+          xslt = require('node_xslt');
+        } catch (e) {
+          grunt.log.error('Unable to generate HTML report because node_xslt is not installed. Make sure that you have the required dependencies for node_xslt.');
+          done(false);
+          return;
+        }
+
+        var htmlFilename = path.join(options.dir, 'report.html');
+        grunt.log.write('Writing ' + htmlFilename + ': ');
+        var stylesheet = xslt.readXsltFile(path.join(__dirname, '../report.html.xsl'));
+        var document = xslt.readXmlString(data);
+        grunt.file.write(htmlFilename, xslt.transform(stylesheet, document, []));
+        grunt.log.ok();
+        done();
+      } else {
+        done();
+      }
     });
   });
 };

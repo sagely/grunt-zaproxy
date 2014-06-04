@@ -250,6 +250,13 @@ grunt.initConfig({
 
 ### Options
 
+#### options.dir
+Type: `String`
+
+Required: `true`
+
+The directory where the report will be stored.
+
 #### options.host
 Type: `String`
 
@@ -264,12 +271,12 @@ Default value: `8080`
 
 The port where the proxy is running.
 
-#### options.path
-Type: `String`
+#### options.html
+Type: `Boolean`
 
-Required: `true`
+Default value: `false`
 
-The path where the report will be stored.
+If true, generate an HTML version of the report. Note that in order for this to work, certain dependencies must be installed (see [node_xslt](https://www.npmjs.org/package/node_xslt) for more information)
 
 ### Usage Examples
 A typical ZAProxy run consists of the following steps:
