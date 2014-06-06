@@ -39,6 +39,14 @@ module.exports = function (grunt) {
         args.push(k + '=' + options.config[k]);
       }
     }
+    if (options.host) {
+      args.push('-host');
+      args.push(options.host);
+    }
+    if (options.port) {
+      args.push('-port');
+      args.push(options.port);
+    }
 
     // Spawn ZAProxy
     // var zapPath = path.join(__dirname, '../vendor/zap');
