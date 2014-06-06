@@ -1,6 +1,6 @@
 {
   "name": "grunt-zaproxy",
-  "description": "Grunt task for zaproxy.",
+  "description": "Grunt tasks for zaproxy.",
   "version": "0.1.0",
   "homepage": "https://github.com/TeamPraxis/grunt-zaproxy",
   "author": {
