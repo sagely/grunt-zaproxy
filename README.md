@@ -305,6 +305,91 @@ Note that in order for this to work your acceptance test suite would have to be 
 
 Once quirk to note about these tasks is that the `zap_alert` task does not actually fail Grunt if alerts are found. Instead, it sets a flag named `zap_alert.failed` in `grunt.config`. The `zap_stop` task then looks for this flag and fails Grunt if it finds it. This is so that the stop task will be run regardless of whether or not errors are found.
 
+### Sample Gruntfile
+
+```js
+'use strict';
+
+var async = require('async'),
+    request = require('request');
+
+module.exports = function (grunt) {
+  grunt.initConfig({
+    'zap_start': {
+      options: {
+        port: 8081
+      }
+    },
+    'zap_spider': {
+      options: {
+        url: 'http://localhost:3000',
+        port: 8081
+      }
+    },
+    'zap_scan': {
+      options: {
+        url: 'http://localhost:3000',
+        port: 8081
+      }
+    },
+    'zap_alert': {
+      options: {
+        port: 8081
+      }
+    },
+    'zap_report': {
+      options: {
+        dir: 'build/reports/zaproxy',
+        port: 8081,
+        html: true
+      }
+    },
+    'zap_stop': {
+      options: {
+        port: 8081
+      }
+    }
+  });
+
+  grunt.loadNpmTasks('grunt-zaproxy');
+
+  /**
+   * Run acceptance tests to teach ZAProxy how to use the app.
+   **/
+  grunt.registerTask('acceptance_tests', function () {
+    var done = this.async();
+
+    async.series([
+      function (callback) {
+        request.get('http://localhost:3000/index.html', callback);
+      }
+      // Add more requests to navigate through parts of the application
+    ], function (err) {
+      if (err) {
+        grunt.fail.warn('Acceptance test failed: ' + JSON.stringify(err, null, 2));
+        return;
+      }
+      grunt.log.ok();
+      done();
+    });
+  });
+
+  /**
+   * ZAProxy alias task.
+   **/
+  grunt.registerTask('zap', [
+    'zap_start',
+    'acceptance_tests',
+    'zap_spider',
+    'zap_scan',
+    'zap_alert',
+    'zap_report',
+    'zap_stop'
+  ]);
+};
+```
+
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
