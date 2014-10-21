@@ -359,9 +359,12 @@ module.exports = function (grunt) {
   grunt.registerTask('acceptance_tests', function () {
     var done = this.async();
 
+    // make sure requests are proxied through ZAP
+    var r = request.defaults({'proxy': 'http://localhost:8081'});
+
     async.series([
       function (callback) {
-        request.get('http://localhost:3000/index.html', callback);
+        r.get('http://localhost:3000/index.html', callback);
       }
       // Add more requests to navigate through parts of the application
     ], function (err) {
