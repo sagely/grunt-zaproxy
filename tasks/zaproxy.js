@@ -60,7 +60,7 @@ module.exports = function (grunt) {
     });
     child.on('error', function (err) {
       if (err.code === 'ENOENT') {
-        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and zap.sh is available on the executable path.');
+        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and zap.sh is available on the executable path: ' + JSON.stringify(err, null, 2));
       }
     });
 
