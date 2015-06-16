@@ -100,7 +100,8 @@ module.exports = function (grunt) {
     // Set up options.
     var options = this.options({
       host: 'localhost',
-      port: '8080'
+      port: '8080',
+      apiKey: '7c3sdphhcg24l7hnjj0dgeg3as'
     });
 
     var asyncDone = this.async();
@@ -114,11 +115,17 @@ module.exports = function (grunt) {
       }
     };
 
-    var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
+    console.log('SERVER_HOST : ' + options.host);
+    console.log('SERVER_PORT : ' + options.port);
+    console.log('APIKEY : ' + options.apiKey);
+
+    var options = { proxy: 'http://' + options.host + ':' + options.port, apikey: options.apiKey };
+
+    var zaproxy = new ZapClient(options);
     grunt.log.write('Stopping ZAProxy: ');
     zaproxy.core.shutdown(function (err) {
       if (err) {
-        grunt.log.writeln('ZAProxy does not appear to be running.');
+        grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
