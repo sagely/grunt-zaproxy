@@ -101,7 +101,7 @@ module.exports = function (grunt) {
     var options = this.options({
       host: 'localhost',
       port: '8080',
-      apiKey: '7c3sdphhcg24l7hnjj0dgeg3as'
+      apiKey: 'null'
     });
 
     var asyncDone = this.async();
@@ -115,15 +115,11 @@ module.exports = function (grunt) {
       }
     };
 
-    console.log('SERVER_HOST : ' + options.host);
-    console.log('SERVER_PORT : ' + options.port);
-    console.log('APIKEY : ' + options.apiKey);
-
-    var options = { proxy: 'http://' + options.host + ':' + options.port, apikey: options.apiKey };
+    var options = { proxy: 'http://' + options.host + ':' + options.port};
 
     var zaproxy = new ZapClient(options);
     grunt.log.write('Stopping ZAProxy: ');
-    zaproxy.core.shutdown(function (err) {
+    zaproxy.core.shutdown(options.apiKey, function (err) {
       if (err) {
         grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
         done();
@@ -302,7 +298,7 @@ module.exports = function (grunt) {
     grunt.log.write('Waiting for scanning to finish: ');
     waitForPassive(zaproxy, function (err) {
       if (err) {
-        grunt.fail.warn('ZAProxy does not appear to be running.');
+        grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
@@ -311,7 +307,7 @@ module.exports = function (grunt) {
       grunt.log.write('Checking for alerts: ');
       zaproxy.core.alerts('', '', '', function (err, res) {
         if (err) {
-          grunt.fail.warn('ZAProxy does not appear to be running.');
+          grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
           done();
           return;
         }
@@ -370,7 +366,7 @@ module.exports = function (grunt) {
         try {
           xslt = require('node_xslt');
         } catch (e) {
-          grunt.log.error('Unable to generate HTML report because node_xslt is not installed. Make sure that you have the required dependencies for node_xslt.');
+          grunt.log.error('Unable to generate HTML report because node_xslt is not installed. Make sure that you have the required dependencies for node_xslt: ' + JSON.stringify(e, null, 2));
           done(false);
           return;
         }
