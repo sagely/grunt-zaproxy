@@ -60,7 +60,7 @@ module.exports = function (grunt) {
     });
     child.on('error', function (err) {
       if (err.code === 'ENOENT') {
-        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and zap.sh is available on the executable path.');
+        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and zap.sh is available on the executable path: ' + JSON.stringify(err, null, 2));
       }
     });
 
@@ -100,7 +100,8 @@ module.exports = function (grunt) {
     // Set up options.
     var options = this.options({
       host: 'localhost',
-      port: '8080'
+      port: '8080',
+      apiKey: 'null'
     });
 
     var asyncDone = this.async();
@@ -114,11 +115,13 @@ module.exports = function (grunt) {
       }
     };
 
-    var zaproxy = new ZapClient({ proxy: 'http://' + options.host + ':' + options.port });
+    var options = { proxy: 'http://' + options.host + ':' + options.port};
+
+    var zaproxy = new ZapClient(options);
     grunt.log.write('Stopping ZAProxy: ');
-    zaproxy.core.shutdown(function (err) {
+    zaproxy.core.shutdown(options.apiKey, function (err) {
       if (err) {
-        grunt.log.writeln('ZAProxy does not appear to be running.');
+        grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
@@ -295,7 +298,7 @@ module.exports = function (grunt) {
     grunt.log.write('Waiting for scanning to finish: ');
     waitForPassive(zaproxy, function (err) {
       if (err) {
-        grunt.fail.warn('ZAProxy does not appear to be running.');
+        grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
         done();
         return;
       }
@@ -304,7 +307,7 @@ module.exports = function (grunt) {
       grunt.log.write('Checking for alerts: ');
       zaproxy.core.alerts('', '', '', function (err, res) {
         if (err) {
-          grunt.fail.warn('ZAProxy does not appear to be running.');
+          grunt.fail.warn('ZAProxy does not appear to be running: ' + JSON.stringify(err, null, 2));
           done();
           return;
         }
@@ -363,7 +366,7 @@ module.exports = function (grunt) {
         try {
           xslt = require('node_xslt');
         } catch (e) {
-          grunt.log.error('Unable to generate HTML report because node_xslt is not installed. Make sure that you have the required dependencies for node_xslt.');
+          grunt.log.error('Unable to generate HTML report because node_xslt is not installed. Make sure that you have the required dependencies for node_xslt: ' + JSON.stringify(e, null, 2));
           done(false);
           return;
         }
