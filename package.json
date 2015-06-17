@@ -1,7 +1,7 @@
 {
   "name": "grunt-zaproxy",
   "description": "Grunt tasks for zaproxy.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/TeamPraxis/grunt-zaproxy",
   "author": {
     "name": "Keith Hamasaki",
