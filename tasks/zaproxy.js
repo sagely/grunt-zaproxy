@@ -26,7 +26,9 @@ module.exports = function (grunt) {
     var options = this.options({
       host: 'localhost',
       port: '8080',
-      daemon: true
+      daemon: true,
+      path: undefined,
+      os: 'linux'
     });
 
     var args = [];
@@ -50,9 +52,17 @@ module.exports = function (grunt) {
 
     // Spawn ZAProxy
     // var zapPath = path.join(__dirname, '../vendor/zap');
-    // var cmd = path.join(options.path, 'zap.sh');
+
     grunt.log.write('Starting ZAProxy: ');
-    var child = spawn('zap.sh', args);
+
+    var zapScript = (options.os === 'windows' ? 'zap.bat' : 'zap.sh');
+
+    var cmd = function () {
+      return path.join(options.path, zapScript);
+    };
+
+    var child = (options.path ? spawn(cmd(), args) : spawn(zapScript, args));
+
     child.on('close', function (code) {
       if (code) {
         grunt.fail.warn('Error launching ZAProxy: ' + code);
@@ -115,9 +125,9 @@ module.exports = function (grunt) {
       }
     };
 
-    var options = { proxy: 'http://' + options.host + ':' + options.port};
+    var zapOptions = { proxy: 'http://' + options.host + ':' + options.port};
 
-    var zaproxy = new ZapClient(options);
+    var zaproxy = new ZapClient(zapOptions);
     grunt.log.write('Stopping ZAProxy: ');
     zaproxy.core.shutdown(options.apiKey, function (err) {
       if (err) {

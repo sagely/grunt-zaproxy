@@ -20,8 +20,16 @@ module.exports = function (grunt) {
       options: {
         jshintrc: '.jshintrc'
       }
+    },
+    zap_start: {
+      options: {
+        path: 'ZAP_2.4.0'
+      }
     }
   });
+
+  // Actually load this plugin's task(s).
+  grunt.loadTasks('tasks');
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
