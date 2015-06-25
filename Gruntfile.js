@@ -23,7 +23,6 @@ module.exports = function (grunt) {
     },
     zap_start: {
       options: {
-        path: 'ZAP_2.4.0'
       }
     }
   });

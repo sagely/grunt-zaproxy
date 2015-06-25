@@ -58,10 +58,10 @@ module.exports = function (grunt) {
     var zapScript = (options.os === 'windows' ? 'zap.bat' : 'zap.sh');
 
     var cmd = function () {
-      return path.join(options.path, zapScript);
+      return (options.path ? path.join(options.path, zapScript) : zapScript);
     };
 
-    var child = (options.path ? spawn(cmd(), args) : spawn(zapScript, args));
+    var child = (options.os === 'windows' ? spawn(zapScript, args, {cwd: options.path}) : spawn(cmd(), args));
 
     child.on('close', function (code) {
       if (code) {
