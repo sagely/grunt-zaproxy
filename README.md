@@ -18,7 +18,7 @@ grunt.loadNpmTasks('grunt-zaproxy');
 ```
 
 ## The "zap_start" task
-Start a ZAProxy instance, wait for it to initialize, and create a new session. Note that ZAProxy must be installed and zap.sh must be available on the executable path for this to work.
+Start a ZAProxy instance, wait for it to initialize, and create a new session. Note that ZAProxy must be installed and zap.sh (or zap.bat for Windows) needs to be specified on a path or must be available on the executable path for this to work
 
 ### Overview
 In your project's Gruntfile, add a section named `zap_start` to the data object passed into `grunt.initConfig()`.
@@ -55,6 +55,20 @@ Type: `Boolean`
 Default value: `true`
 
 Whether or not to run ZAProxy in daemon mode.
+
+#### options.path
+Type: `String`
+
+Default value: `undefined`
+
+The path used to find Zap. If not specified, it looks at the executable path
+
+#### options.os
+Type: `String`
+
+Default value: `linux`
+
+The operational system where Zap will run to. If `windows` will execute zap.bat or else zap.sh
 
 ## The "zap_stop" task
 Stop a running instance of ZAProxy.
