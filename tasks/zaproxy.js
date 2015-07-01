@@ -70,7 +70,7 @@ module.exports = function (grunt) {
     });
     child.on('error', function (err) {
       if (err.code === 'ENOENT') {
-        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and zap.sh is available on the executable path: ' + JSON.stringify(err, null, 2));
+        grunt.fail.fatal('Error launching ZAProxy. Make sure that ZAProxy is installed and ' + zapScript + ' is available on the executable path: ' + JSON.stringify(err, null, 2));
       }
     });
 
@@ -114,16 +114,7 @@ module.exports = function (grunt) {
       apiKey: 'null'
     });
 
-    var asyncDone = this.async();
-
-    // fail the build if zap_alert found errors
-    var done = function () {
-      if (grunt.config.get('zap_alert.failed')) {
-        asyncDone(false);
-      } else {
-        asyncDone(true);
-      }
-    };
+    var done = this.async();
 
     var zapOptions = { proxy: 'http://' + options.host + ':' + options.port};
 
@@ -392,5 +383,17 @@ module.exports = function (grunt) {
         done();
       }
     });
+  });
+
+  grunt.registerTask('zap_results', 'It fails if found an alert that should not be ignored', function () {
+    var done = this.async();
+    grunt.log.write('Verifying alert errors...');
+    if (grunt.config.get('zap_alert.failed')) {
+      grunt.log.write('Error found!');
+      done(false);
+    }
+
+    done(true);
+
   });
 };
