@@ -208,7 +208,7 @@ Default value: `[]`
 A list of scanner IDs to disable.
 
 ## The "zap_alert" task
-Check alerts from a running instance of ZAProxy. This tasks sets a flag named `zap_alert.failed` if alerts that are not in the ignore list are found. The `zap_stop` task looks for this flag and fails the run if it is found.
+Check alerts from a running instance of ZAProxy. This tasks sets a flag named `zap_alert.failed` if alerts that are not in the ignore list are found. The `zap_results` task looks for this flag and fails the run if it is found.
 
 ### Overview
 In your project's Gruntfile, add a section named `zap_alert` to the data object passed into `grunt.initConfig()`.
@@ -292,6 +292,26 @@ Default value: `false`
 
 If true, generate an HTML version of the report. Note that in order for this to work, certain dependencies must be installed (see [node_xslt](https://www.npmjs.org/package/node_xslt) for more information)
 
+## The "zap_results" task
+Verify the results of a zap run. This should be run at the end of the list of zap tasks, and will fail the build if the `zap_alert` task found any errors.
+
+### Overview
+In your project's Gruntfile, add a section named `zap_results` to the data object passed into `grunt.initConfig()`.
+
+```js
+grunt.initConfig({
+  'zap_results: {
+    options: {
+      // Task-specific options go here.
+    }
+  },
+});
+```
+
+### Options
+
+No options are available for this task.
+
 ### Usage Examples
 A typical ZAProxy run consists of the following steps:
 
@@ -301,6 +321,7 @@ A typical ZAProxy run consists of the following steps:
 4. (optional) Clean up the environment after scanning.
 5. Check for alerts.
 6. Shut down ZAProxy.
+7. Verify the results, failing the build if errors are found.
 
 This can be accomplished using the set of tasks provided by this plugin along with some additional custom tasks defined in your own Gruntfile. For example, you could define an alias as follows:
 
@@ -311,13 +332,14 @@ This can be accomplished using the set of tasks provided by this plugin along wi
     'zap_spider',
     'zap_scan',
     'zap_alert',
-    'zap_stop'
+    'zap_stop',
+    'zap_results'
   ]);
 ```
 
 Note that in order for this to work your acceptance test suite would have to be configured to access the target site via the proxy.
 
-Once quirk to note about these tasks is that the `zap_alert` task does not actually fail Grunt if alerts are found. Instead, it sets a flag named `zap_alert.failed` in `grunt.config`. The `zap_stop` task then looks for this flag and fails Grunt if it finds it. This is so that the stop task will be run regardless of whether or not errors are found.
+Once quirk to note about these tasks is that the `zap_alert` task does not actually fail Grunt if alerts are found. Instead, it sets a flag named `zap_alert.failed` in `grunt.config`. The `zap_results` task then looks for this flag and fails Grunt if it finds it. This is so that the stop task will be run regardless of whether or not errors are found.
 
 ### Sample Gruntfile
 
@@ -401,7 +423,8 @@ module.exports = function (grunt) {
     'zap_scan',
     'zap_alert',
     'zap_report',
-    'zap_stop'
+    'zap_stop',
+    'zap_results'
   ]);
 };
 ```
