@@ -324,6 +324,7 @@ module.exports = function (grunt) {
 
           // set a flag so that the cleanup task can fail the build
           grunt.config.set('zap_alert.failed', true);
+          grunt.config.set('zap_alert.alerts', alerts);
         } else {
           grunt.config.set('zap_alert.failed', false);
           grunt.log.ok();
@@ -387,12 +388,25 @@ module.exports = function (grunt) {
 
   grunt.registerTask('zap_results', 'It fails if found an alert that should not be ignored', function () {
     var done = this.async();
+
+    var options = this.options({
+      risks : ['High', 'Medium', 'Low', 'Informational']
+    });
+
     grunt.log.write('Verifying alert errors...');
-    if (grunt.config.get('zap_alert.failed')) {
-      grunt.log.write('Error found!');
+
+    var alerts = grunt.config.get('zap_alert.alerts') || [];
+
+    var filteredAlerts = alerts.filter(function(alert){
+      return options.risks.indexOf(alert.risk) > -1;
+    });
+
+    if (grunt.config.get('zap_alert.failed') && filteredAlerts.length > 0) {
+      grunt.fail.warn('Error found!');
       done(false);
     }
 
+    grunt.log.write('No errors found');
     done(true);
 
   });

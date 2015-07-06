@@ -300,7 +300,7 @@ In your project's Gruntfile, add a section named `zap_results` to the data objec
 
 ```js
 grunt.initConfig({
-  'zap_results: {
+  'zap_results': {
     options: {
       // Task-specific options go here.
     }
@@ -311,6 +311,13 @@ grunt.initConfig({
 ### Options
 
 No options are available for this task.
+
+#### options.risks
+Type: `Array`
+
+Default value: `[High, Medium, Low, Informational]`
+
+A list of risks that should make this task fail. By default it fails for any risk, but it is possible to configure to break to specific risks. E.g: ['High']
 
 ### Usage Examples
 A typical ZAProxy run consists of the following steps:
