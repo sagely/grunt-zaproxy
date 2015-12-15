@@ -364,18 +364,23 @@ module.exports = function (grunt) {
       }
     },
     'zap_spider': {
+      options: {
+        port: 8081,
+        exclude: ['.*bower_components.*']
+      }
       localhost: {
         options: {
           url: 'http://localhost:3000',
-          port: 8081
         }
       }
     },
     'zap_scan': {
+      options: {
+        port: 8081
+      },
       localhost: {
         options: {
           url: 'http://localhost:3000',
-          port: 8081
         }
       }
     },
